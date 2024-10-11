@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button"
 import { CloudUpload  } from "lucide-react"
 import { File } from "lucide-react"
 import { X } from "lucide-react"
-import { useRouter } from "next/navigation"
+//import { useRouter } from "next/navigation"
+import Error from "next/error"
 
 export default function FileUpload() {
-  const router = useRouter();
+  //const router = useRouter();
   const [file, setFile] = useState<File | null>(null)
 
   const handleFileChange = (e:ChangeEvent<HTMLInputElement>) => {
@@ -17,6 +18,31 @@ export default function FileUpload() {
   const handleRemoveFile = () => {
     setFile(null)
   }
+
+  const handleUpload = async () => {
+    if (!file) return
+    const formData = new FormData()
+    formData.append("file", file)
+    try{
+      const response = await fetch("http://localhost:8000/generate", {
+        method: "POST",
+        body: formData,
+      })
+      const data = await response.json()
+      console.log(data);
+    }
+
+    catch(e:unknown){
+      if(e instanceof Error)
+      {
+      console.log("Error is ",e)
+      }
+    else{
+      console.log("Error is ",e)
+    }
+  }
+}
+
   return (
     <div className="grid w-full max-w-sm items-center gap-4">
       <div
@@ -67,11 +93,10 @@ export default function FileUpload() {
         </div>
       )}
       <Button onClick={()=>{
-        router.push("/result")
+        handleUpload()
       }}type="submit" className="w-full">
         Submit
       </Button>
     </div>
   )
 }
-
