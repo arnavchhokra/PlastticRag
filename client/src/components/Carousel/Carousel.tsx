@@ -29,7 +29,7 @@ useEffect(() => {
 }, [api, current]);
 
 return (
-    <div className="w-full py-20 lg:py-40">
+    <div className="px-5 w-full py-20 lg:py-40">
     <div className="container mx-auto">
         <div className="grid grid-cols-5 gap-10 items-center">
         <h3 className="text-xl tracking-tighter lg:max-w-xl font-regular text-left">
@@ -41,10 +41,10 @@ return (
             <CarouselContent>
                 {Array.from({ length: 25 }).map((_, index) => (
                 <CarouselItem
-                    className="basis-1/4 lg:basis-1/6"
+                    className="basis-1/ lg:basis-1/5 xl:basis-1/6"
                     key={index}
                 >
-                    <div className="flex rounded-md aspect-square bg-muted items-center justify-center p-2">
+                    <div className="flex min-h-[150px]  rounded-md aspect-square bg-muted items-center justify-center p-2">
                     <span className="text-sm">Logo {index + 1}</span>
                     </div>
                 </CarouselItem>

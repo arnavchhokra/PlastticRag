@@ -38,7 +38,7 @@ function Hero()
   const router = useRouter();
 
   return (
-    <div className="w-full">
+    <div className="px-5 w-full">
       <div className="container mx-auto">
         <div className="flex gap-8 py-20 lg:py-40 items-center justify-center flex-col">
           <div className="flex gap-4 flex-col">
@@ -89,9 +89,8 @@ function Hero()
   </DialogContent>
 </Dialog>
             <Button onClick={()=>{router.push("/signup")}}size="lg" className="gap-4">
-              Sign up here <MoveRight className="w-4 h-4" />
+              Sign up
             </Button>
-            <ModeToggle/>
           </div>
         </div>
       </div>

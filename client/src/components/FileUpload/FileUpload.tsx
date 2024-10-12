@@ -3,12 +3,19 @@ import { Button } from "@/components/ui/button"
 import { CloudUpload  } from "lucide-react"
 import { File } from "lucide-react"
 import { X } from "lucide-react"
-//import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import Error from "next/error"
+import { ApiResponse } from "@/types/facialtypes"
+import { faceAtom } from "@/atom/atom"
+import { useRecoilState } from "recoil"
 
 export default function FileUpload() {
-  //const router = useRouter();
-  const [file, setFile] = useState<File | null>(null)
+
+
+  const router = useRouter();
+  const [file, setFile] = useState<File | null>(null);
+  const [responseData, setResponseData] = useRecoilState(faceAtom);
+
 
   const handleFileChange = (e:ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -29,6 +36,19 @@ export default function FileUpload() {
         body: formData,
       })
       const data = await response.json()
+      const cleanedMsg = data.msg.replace(/```json\n|```/g, '').replace(/"status:":/g, '"status":').trim();
+      const parsedData: ApiResponse = JSON.parse(cleanedMsg);
+      if(parsedData.status === 200) {
+        setResponseData(parsedData)
+        console.log(parsedData.facialFeatures);
+        console.log(parsedData.improvementTips);
+        console.log(parsedData.doctorImprovements);
+        router.push("/result");
+      }
+      else{
+        console.log("NOOOOOO")
+        alert("DIKKAT HOGYI BAWEEEEEE")
+      }
       console.log(data);
     }
 
@@ -94,7 +114,7 @@ export default function FileUpload() {
       )}
       <Button onClick={()=>{
         handleUpload()
-      }}type="submit" className="w-full">
+      }} className="w-full">
         Submit
       </Button>
     </div>

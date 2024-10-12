@@ -1,5 +1,7 @@
 "use client"
-import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
+
+import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts"
+
 import {
   ChartConfig,
   ChartContainer,
@@ -7,42 +9,86 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
+export const description = "A radial chart with stacked sections"
 
-const chartData = [
-  { name: "eyes", value: 30 },
-  { name: "lips", value: 25 },
-  { name: "cheekbones", value: 20 },
-  { name: "jawline", value: 15 },
-  { name: "nose", value: 10 },
-]
+import { FeatureCardProps } from "@/types/facialtypes"
 
 const chartConfig = {
   desktop: {
     label: "Desktop",
     color: "hsl(var(--chart-1))",
   },
+  mobile: {
+    label: "Mobile",
+    color: "hsl(var(--chart-2))",
+  },
 } satisfies ChartConfig
 
-export default function RadChart() {
+ const RadChart: React.FC<FeatureCardProps> = ({ value }) =>{
+
+  const chartData = [{ month: "january", desktop: value, mobile: 5 }]
+
+  const totalVisitors = chartData[0].desktop||1 + chartData[0].mobile
+
   return (
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="mx-auto aspect-square w-full max-w-[200px] h-full"
         >
-          <RadarChart data={chartData}>
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <PolarAngleAxis dataKey="name" />
-            <PolarGrid />
-            <Radar
-              dataKey="value"
-              fill="var(--color-desktop)"
-              fillOpacity={0.6}
-              dot={{
-                r: 4,
-                fillOpacity: 1,
-              }}
+          <RadialBarChart className="min-h-[200px]"
+            data={chartData}
+            endAngle={180}
+            innerRadius={80}
+            outerRadius={130}
+          >
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
             />
-          </RadarChart>
+            <PolarRadiusAxis  tick={false} tickLine={false} axisLine={false}>
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) - 10}
+                          className="fill-foreground text-4xl font-bold"
+                        >
+                {value}/5
+                </tspan>
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) + 4}
+                          className="fill-muted-foreground"
+                        >
+                          Score
+                        </tspan>
+                      </text>
+
+                    )
+                  }
+                }}
+              />
+            </PolarRadiusAxis>
+            <RadialBar
+              dataKey="desktop"
+              stackId="a"
+              cornerRadius={5}
+              fill="var(--color-desktop)"
+              className="stroke-transparent stroke-2"
+            />
+            <RadialBar
+              dataKey="mobile"
+              fill="var(--color-mobile)"
+              stackId="a"
+              cornerRadius={5}
+              className="stroke-transparent stroke-2"
+            />
+          </RadialBarChart>
         </ChartContainer>
   )
 }
+
+export default RadChart;

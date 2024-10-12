@@ -2,8 +2,8 @@ import { User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export const Feature = () => (
-  <div className="w-full py-20 lg:py-40">
-    <div className="container mx-auto">
+  <div className="px-5 w-full py-20 lg:py-40">
+    <div className="container mx-auto w-full">
       <div className="flex flex-col gap-10">
         <div className="flex gap-4 flex-col items-start">
           <div>

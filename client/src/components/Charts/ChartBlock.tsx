@@ -6,15 +6,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Button } from "@/components/ui/button"
 import { ArrowUpRight, Eye, Smile, Scissors, Sparkles } from "lucide-react"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import RadChart from "./RadChart"
-// Mock data
+import { faceAtom } from "@/atom/atom"
+import { useRecoilState } from "recoil"
+import { FeatureCardProps } from "@/types/facialtypes"
+
+
+
+const FeatureCard: React.FC<FeatureCardProps> = ({ feature, value })=> (
+  <Card className="w-full">
+    <CardHeader>
+      <CardTitle className="text-center">{feature}</CardTitle>
+    </CardHeader>
+    <CardContent className="flex justify-center items-center h-40 ">
+    <RadChart feature={feature} value={value || 2} />
+    </CardContent>
+  </Card>
+)
+
+
+export default function ChartBlock() {
+  const [userData, setUserData] = useRecoilState(faceAtom);
+
+// Mock da
 const facialComparisonData = [
-  { feature: "Eyes", userScore: 85, averageScore: 70 },
-  { feature: "Nose", userScore: 75, averageScore: 72 },
-  { feature: "Lips", userScore: 90, averageScore: 68 },
-  { feature: "Jawline", userScore: 82, averageScore: 65 },
-  { feature: "Cheekbones", userScore: 88, averageScore: 70 },
-  { feature: "Forehead", userScore: 78, averageScore: 75 },
+  { feature: "Eyes", userScore:(userData?.facialFeatures.eyes || 3) * 20, averageScore: 63 },
+  { feature: "Nose", userScore: (userData?.facialFeatures.nose || 3) * 20, averageScore: 54 },
+  { feature: "Lips", userScore: (userData?.facialFeatures.lips || 3) * 20, averageScore: 68 },
+  { feature: "Jawline", userScore: (userData?.facialFeatures.jawline || 3) * 20, averageScore: 65 },
+  { feature: "Cheekbones", userScore: (userData?.facialFeatures.cheekbones || 3) * 20, averageScore: 70 },
+  { feature: "Forehead", userScore: (3) * 20, averageScore: 65 },
 ]
 
 // const goodLooksPercentileData = [
@@ -26,15 +48,16 @@ const facialComparisonData = [
 //   { category: "You", percentile: 85 },
 // ]
 
+console.log(userData)
 const bestFacialFeaturesData = [
-  { name: "eyes", value: 30 },
-  { name: "lips", value: 25 },
-  { name: "cheekbones", value: 20 },
-  { name: "jawline", value: 15 },
-  { name: "nose", value: 10 },
+  { name: "eyes", value: (userData?.facialFeatures.eyes || 0)  *100 /20 },
+  { name: "lips",  value: (userData?.facialFeatures.lips || 3) *100 /20 },
+  { name: "cheekbones",  value: (userData?.facialFeatures.cheekbones || 3) *100 /20 },
+  { name: "jawline",  value: (userData?.facialFeatures.jawline || 3) *100 /20 },
+  { name: "nose",  value: (userData?.facialFeatures.nose || 3) *100 /20 },
 ]
 
-const improvementTips = [
+const improvementTips =  userData?.improvementTips || [
   "Enhance your eye area with proper skincare and makeup techniques",
   "Consider a new hairstyle that complements your face shape",
   "Practice facial exercises to improve muscle tone and definition",
@@ -42,7 +65,7 @@ const improvementTips = [
   "Use contouring techniques to accentuate your best features",
 ]
 
-const surgicalTips = [
+const surgicalTips = userData?.doctorImprovements || [
   "Consider a brow lift to improve the appearance of your forehead",
   "Explore a facelift to address sagging skin and wrinkles",
   "Consider a rhinoplasty to refine your nose shape",
@@ -50,7 +73,21 @@ const surgicalTips = [
   "Consider a cheek augmentation to enhance your cheekbones",
 ]
 
-export default function ChartBlock() {
+const features = [
+  { name: "Eyes", value: userData?.facialFeatures.eyes },
+  { name: "Nose", value: userData?.facialFeatures.nose },
+  { name: "Lips", value: userData?.facialFeatures.lips },
+  { name: "Jawline", value: userData?.facialFeatures.jawline },
+  { name: "Cheekbones", value: userData?.facialFeatures.cheekbones },
+]
+
+
+const overallRating = ((userData?.facialFeatures.eyes || 3) + (userData?.facialFeatures.nose || 3) + (userData?.facialFeatures.lips || 3) + (userData?.facialFeatures.jawline || 3) + (userData?.facialFeatures.cheekbones || 3)) * 10 / 25;
+
+
+
+
+
   const [currentImprovementTip, setCurrentImprovementTip] = useState(0)
   const [currentSurgicalTip, setCurrentSurgicalTip] = useState(0)
 
@@ -64,17 +101,35 @@ export default function ChartBlock() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Title</h1>
+      <h1 className="text-3xl font-bold mb-6">REPORT</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <Card className="md:col-span-2 lg:col-span-3">
-      <CardHeader>
-            <CardTitle>SKILL GRAPH</CardTitle>
-            <CardDescription>Your facial features represented in a skill graph.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RadChart/>
-          </CardContent>
-        </Card>
+        <Card className="md:col-span-2 lg:col-span-3">
+        <CardHeader>
+          <CardTitle>Facial Features</CardTitle>
+          <CardDescription>Your facial features analysis</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-1">
+              {features.map((feature, index) => (
+                <CarouselItem key={index} className="pl-1 md:basis-1/3 lg:basis-1/3">
+                  <div className="p-1">
+                    <FeatureCard feature={feature.name} value={feature.value || 2} />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </CardContent>
+      </Card>
         <Card className="lg:col-span-2 overflow-clip">
           <CardHeader>
             <CardTitle>Facial Features Comparison</CardTitle>
@@ -206,13 +261,6 @@ export default function ChartBlock() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="flex items-center space-x-4">
-                <Eye className="h-10 w-10 text-primary" />
-                <div>
-                  <p className="text-sm font-medium">Best Feature</p>
-                  <p className="text-2xl font-bold">Eyes</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
                 <Smile className="h-10 w-10 text-primary" />
                 <div>
                   <p className="text-sm font-medium">Smile Impact</p>
@@ -230,7 +278,7 @@ export default function ChartBlock() {
                 <Sparkles className="h-10 w-10 text-primary" />
                 <div>
                   <p className="text-sm font-medium">Overall Rating</p>
-                  <p className="text-2xl font-bold">8.5/10</p>
+                  <p className="text-2xl font-bold">{overallRating}/10</p>
                 </div>
               </div>
             </div>
