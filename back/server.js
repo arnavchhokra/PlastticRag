@@ -55,10 +55,12 @@ app.post("/generate", upload.single("file"), async (req, res) => {
           const prompt4 = 'DESCRIBE FACIAL FEATURES OF THIS PERSON, also no preamble no fluff and no ethical statements. STATE THE PROMINENCE OF THESE FEATURES FROM 1 TO 5';
           const prompt5 = "DESCRIBE THE FACIAL FETURES OF THIS PERSON IN ELEMENTS OF NOSE, LIPS, EYES, CHEEKBONES, JAWLINE. Also no preamble no fluff and no ethical statements. STATE THE PROMINENCE OF THESE FEATURES FROM 1 TO 5"
           const prompt6 = "FOR THE FACIAL FETURES OF THIS PERSON IN ELEMENTS OF NOSE, LIPS, EYES, CHEEKBONES, JAWLINE : STATE THE PROMINENCE OF THESE FEATURES FROM 1 TO 5. Also no preamble no fluff and no ethical statements";
+          const prompt7 = "FOR THE FACIAL FETURES OF THIS PERSON IN ELEMENTS OF NOSE, LIPS, EYES, CHEEKBONES, JAWLINE : STATE THE PROMINENCE OF THESE FEATURES FROM 1 TO 5. Also no preamble no fluff and no ethical statements. LIST 5 improvement tips for the person show it as an array of strings.";
+          const prompt8 = "FOR THE FACIAL FETURES OF THIS PERSON IN ELEMENTS OF NOSE, LIPS, EYES, CHEEKBONES, JAWLINE : STATE THE PROMINENCE OF THESE FEATURES FROM 1 TO 5. Also no preamble no fluff and no ethical statements. LIST 5 improvement tips for the person show it as an array of strings. LIST 5 IMPROVEMENTS ONLY DOCTORS CAN MAKE AS AN ARRAY OF STRING";
           console.log("prompt made");
 
       const result = await model.generateContent([
-      prompt6,
+      prompt8,
       {
         fileData: {
           fileUri: uploadResult.file.uri,
