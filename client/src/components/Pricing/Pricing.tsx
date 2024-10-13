@@ -6,7 +6,7 @@ const pricingPlans = [
   {
     name: "FREE",
     description:
-      "Our goal is to streamline SMB trade, making it easier and faster than ever for everyone and everywhere.",
+      "Get a basic rating and a few general suggestions to enhance your look.",
     price: "$0",
     buttonText: "Try it",
     buttonVariant: "outline",
@@ -15,7 +15,7 @@ const pricingPlans = [
   {
     name: "PRO",
     description:
-      "Our goal is to streamline SMB trade, making it easier and faster than ever for everyone and everywhere.",
+      "Unlock the full potential of GoodLooks with advanced analysis, personalized tips, and more features.",
     price: "$10",
     buttonText: "Try it",
     buttonVariant: "default",
@@ -24,22 +24,20 @@ const pricingPlans = [
 ];
 
 const features = [
-  "SSO",
-  "AI Assistant",
-  "Version Control",
-  "Members",
-  "Multiplayer Mode",
-  "Orchestration",
+  "Multiple Photos",
+  "Downloadable Report",
+  "Patronage",
+  "Updated features",
 ];
 
 const featureAvailability = [
-  [1, 1, 0, 0, 0, 0], // Startup
-  [1, 1, 1, 1, 1, 1], // Growth
+  [1, 0, 0, 0], // Startup
+  [1, 0, 1, 1], // Growth
 ];
 
 export const Pricing = () => (
-  <div className="container mx-auto w-full py-10 lg:py-40">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+  <div  id="price" className="container px-5 mx-auto w-full lg:py-40">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 ">
       {/* Pricing Plans Columns */}
       {pricingPlans.map((plan, planIndex) => (
         <div

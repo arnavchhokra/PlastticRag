@@ -48,7 +48,6 @@ const facialComparisonData = [
 //   { category: "You", percentile: 85 },
 // ]
 
-console.log(userData)
 const bestFacialFeaturesData = [
   { name: "eyes", value: (userData?.facialFeatures.eyes || 0)  *100 /20 },
   { name: "lips",  value: (userData?.facialFeatures.lips || 3) *100 /20 },

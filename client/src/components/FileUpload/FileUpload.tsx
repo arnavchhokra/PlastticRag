@@ -6,16 +6,21 @@ import { X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Error from "next/error"
 import { ApiResponse } from "@/types/facialtypes"
-import { faceAtom } from "@/atom/atom"
-import { useRecoilState } from "recoil"
+import { faceAtom, userAtom  } from "@/atom/atom"
+import { useRecoilValue, useRecoilState } from "recoil"
+import { ReloadIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/hooks/use-toast"
+
 
 export default function FileUpload() {
 
+  const { toast } = useToast()
 
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [responseData, setResponseData] = useRecoilState(faceAtom);
-
+  const [loading, setLoading] = useState(false);
+  const token = useRecoilValue(userAtom);
 
   const handleFileChange = (e:ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -28,11 +33,24 @@ export default function FileUpload() {
 
   const handleUpload = async () => {
     if (!file) return
+    if(!token){
+      toast({
+        title: "Please login first",
+        description: "You need to login to use this feature",
+        variant: "destructive",
+      })
+      router.push('/signin')
+      return;
+    }
+    setLoading(true);
     const formData = new FormData()
     formData.append("file", file)
     try{
       const response = await fetch("http://localhost:8000/generate", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // Send the token in the Authorization header
+        },
         body: formData,
       })
       const data = await response.json()
@@ -40,28 +58,22 @@ export default function FileUpload() {
       const parsedData: ApiResponse = JSON.parse(cleanedMsg);
       if(parsedData.status === 200) {
         setResponseData(parsedData)
-        console.log(parsedData.facialFeatures);
-        console.log(parsedData.improvementTips);
-        console.log(parsedData.doctorImprovements);
         router.push("/result");
       }
       else{
-        console.log("NOOOOOO")
-        alert("DIKKAT HOGYI BAWEEEEEE")
+        toast({
+          title: "Please upload a better image",
+          description: "The image you uploaded is not good enough",
+          variant: "destructive",
+        })
       }
-      console.log(data);
     }
 
-    catch(e:unknown){
-      if(e instanceof Error)
-      {
-      console.log("Error is ",e)
-      }
-    else{
-      console.log("Error is ",e)
+    catch(e:any){
+      console.error(e.message)
     }
   }
-}
+
 
   return (
     <div className="grid w-full max-w-sm items-center gap-4">
@@ -112,11 +124,15 @@ export default function FileUpload() {
           </Button>
         </div>
       )}
-      <Button onClick={()=>{
-        handleUpload()
-      }} className="w-full">
-        Submit
-      </Button>
+      {
+        loading?( <Button disabled>
+          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+          Please wait
+        </Button>) : (<Button onClick={handleUpload} className="w-full">
+          Submit
+        </Button>)
+      }
+
     </div>
   )
 }

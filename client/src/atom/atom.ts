@@ -6,3 +6,8 @@ export const  faceAtom = atom<ApiResponse | null>({
   default: null,
 });
 
+
+export const userAtom = atom<string | null >({
+  key:'userAtom',
+  default: null,
+})

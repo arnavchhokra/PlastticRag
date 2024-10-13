@@ -7,15 +7,33 @@ const express = require("express");
 const cors = require("cors");
 const path = require('path');
 
+
+
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const User = require('./model/userModel');
+
+const url= "mongodb://localhost:27017/";
+mongoose.connect(url,{useNewUrlParser: true});
+const con= mongoose.connection;
+
+
+
 require('dotenv').config();
 const app = express();
+
+
 app.use(cors());
+app.use(express.json());
+
 // app.use(cors({ origin: "http://your-frontend-domain.com" }));
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const fileManager = new GoogleAIFileManager(process.env.GOOGLE_API_KEY);;
 
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+
 
 
 const storage = multer.diskStorage({
@@ -31,7 +49,66 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-app.post("/generate", upload.single("file"), async (req, res) => {
+const generateToken = (user) => {
+  return jwt.sign({ userId: user._id, username: user.username,  email: user.email,  }, process.env.JWT_SECRET, { expiresIn: '1h' });
+};
+
+
+const verifyToken = (token) => {
+  return jwt.verify(token, process.env.JWT_SECRET);
+};
+
+
+
+
+
+
+const protectRoute = (req, res, next) => {
+  const authHeader = req.headers.authorization; // Get the token from the Authorization header
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Authorization header is missing or invalid' });
+  }
+
+  const token = authHeader.split(' ')[1];  // Extract the token after 'Bearer'
+  if (!token) {
+      return res.status(401).json({ message: 'Token not provided' });
+  }
+  console.log('token: ', token)
+
+  try {
+      const decoded = verifyToken(token);
+      req.user = {
+        userId: decoded.userId,
+        username: decoded.username,
+        email: decoded.email,
+      };
+      next();
+  } catch (error) {
+      return res.status(401).json({ message: 'Invalid token', error: error.message });
+  }
+
+};
+
+
+app.post('/User', protectRoute, async (req, res)  => {
+  try {
+    const name = req.user.userId;
+    const email = req.user.email;
+    if(name && email)
+    {
+      res.status(200).json({name, email});
+    }
+    else{
+      res.status(400).json({message: "User not found"});
+    }
+  } catch (error) {
+      res.status(400).json({ message: 'User Could not be found', error: error.message });
+  }
+});
+
+
+app.post("/generate", upload.single("file"), protectRoute,  async (req, res) => {
     try {
         console.log("IN ROUTE");
         const file = req.file;
@@ -99,21 +176,62 @@ app.post("/generate", upload.single("file"), async (req, res) => {
         res.status(200).json({msg:result.response.text()});
 
 
-        fs.unlink(file.path, (err) => {
-            if (err) {
-                console.error("Error deleting file:", err);
-            } else {
-                console.log(`File ${file.path} deleted successfully`);
-            }
-        });
-
     } catch (error) {
         console.error("Error generating content:", error);
         res.status(500).send("An error occurred while generating content.");
+    } finally{
+      const file = req.file;
+      if(!file) return;
+      fs.unlink(file.path, (err) => {
+        if (err) {
+            console.error("Error deleting file:", err);
+        } else {
+            console.log(`File ${file.path} deleted successfully`);
+        }
+    });
     }
 });
 
 
+app.post('/register', async (req, res) => {
+  try {
+      const { username, email, password } = req.body;
+      const user = new User({ username, email, password });
+      await user.save();
+      res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+      res.status(400).json({ message: 'Registration failed', error: error.message });
+  }
+});
+
+app.post('/login', async (req, res) => {
+  try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+
+      if (!user || user.password !== password) {
+          return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      const token = generateToken(user);
+      res.json({ token });
+  } catch (error) {
+      res.status(500).json({ message: 'Login failed', error: error.message });
+  }
+});
+
+
+
+
+
 app.listen(8000, () => {
     console.log("Server is running on port 8000");
+    try{
+      con.on('open',() => {
+          console.log('connected');
+      })
+    }catch(error)
+    {
+      console.log("Error: "+error);
+    }
 });

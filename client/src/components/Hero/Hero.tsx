@@ -15,14 +15,28 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import FileUpload from "../FileUpload/FileUpload";
+import { useRecoilState } from "recoil";
+import { userAtom } from "@/atom/atom";
 
 function Hero()
 {
+  const [user, setUser] = useRecoilState(userAtom);
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(
-    () => ["amazing", "new", "wonderful", "beautiful", "smart"],
+    () => ["essential", "timeless", "magnetic", "striking", "radiant"],
     []
   );
+
+
+  useEffect(()=>{
+    const token = localStorage.getItem("looksmax");
+    if(token)
+    {
+      setUser(token);
+    }
+
+
+  },[user])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -38,12 +52,12 @@ function Hero()
   const router = useRouter();
 
   return (
-    <div className="px-5 w-full">
+    <div  className="px-5 w-full">
       <div className="container mx-auto">
         <div className="flex gap-8 py-20 lg:py-40 items-center justify-center flex-col">
           <div className="flex gap-4 flex-col">
             <h1 className="text-5xl md:text-7xl max-w-2xl tracking-tighter text-center font-regular">
-              <span className="text-spektr-cyan-50">This is something</span>
+              <span className="text-spektr-cyan-50">Good Looks are</span>
               <span className="relative flex w-full justify-center overflow-hidden text-center md:pb-4 md:pt-1">
                 &nbsp;
                 {titles.map((title, index) => (
@@ -71,10 +85,7 @@ function Hero()
             </h1>
 
             <p className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-2xl text-center">
-              Managing a small business today is already tough. Avoid further
-              complications by ditching outdated, tedious trade methods. Our
-              goal is to streamline SMB trade, making it easier and faster than
-              ever.
+            Good Looks is an AI powered platform that allows to upload photos and get personalized ratings and improvement tips. Our AI analyzes your features and provides tailored advice on skincare, grooming, and style. It helps you enhance your appearance and build confidence.
             </p>
           </div>
           <div className="flex flex-row gap-3">
@@ -88,9 +99,11 @@ function Hero()
     </DialogHeader>
   </DialogContent>
 </Dialog>
-            <Button onClick={()=>{router.push("/signup")}}size="lg" className="gap-4">
-              Sign up
-            </Button>
+{
+  !user && <Button onClick={()=>{router.push("/signup")}}size="lg" className="gap-4">
+  Sign up
+</Button>
+}
           </div>
         </div>
       </div>

@@ -1,15 +1,54 @@
+"use client"
 import Image from "next/image"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
+import Navbar from "@/components/Navbar/Navbar"
+import { useState } from "react";
+import { useRecoilState } from "recoil"
+import { userAtom } from "@/atom/atom"
+import { useRouter } from "next/navigation"
 export const description =
   "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image."
 
 export default function Dashboard() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [token, setToken] = useRecoilState(userAtom)
+
+  const handleLogin = async () => {
+    try {
+        const response = await fetch('http://localhost:8000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Login failed');
+        }
+
+        const data = await response.json();
+        setToken(data)
+        localStorage.setItem('looksmax', data.token);
+        router.push('/')
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
   return (
+    <div>
+      <Navbar/>
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
@@ -26,6 +65,8 @@ export default function Dashboard() {
                 id="email"
                 type="email"
                 placeholder="m@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -39,9 +80,11 @@ export default function Dashboard() {
                   Forgot your password?
                 </Link>
               </div>
-              <Input id="password" type="password" required />
+              <Input id="password" type="password"  value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required />
             </div>
-            <Button type="submit" className="w-full">
+            <Button onClick={handleLogin} className="w-full">
               Login
             </Button>
           </div>
@@ -62,6 +105,7 @@ export default function Dashboard() {
           className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
+    </div>
     </div>
   )
 }
