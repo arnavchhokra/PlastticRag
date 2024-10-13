@@ -10,10 +10,14 @@ import { useState } from "react";
 import { useRecoilState } from "recoil"
 import { userAtom } from "@/atom/atom"
 import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
+
+
 export const description =
   "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image."
 
 export default function Dashboard() {
+  const { toast } = useToast()
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,9 +42,17 @@ export default function Dashboard() {
         const data = await response.json();
         setToken(data)
         localStorage.setItem('looksmax', data.token);
+        toast({
+          title: "Sign in successful!",
+          description: "You have successfully signed in.",
+        });
         router.push('/')
-    } catch (error) {
-        console.error(error);
+      } catch (error) {
+        toast({
+          title: "Signin failed!",
+          description: "Please try again.",
+          variant: "destructive",
+        });
     }
 };
 

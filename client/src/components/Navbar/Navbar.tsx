@@ -70,7 +70,7 @@ export default function Navbar() {
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
             <Package2 className="h-6 w-6" />
-            <span className="sr-only">LooksMAX</span>
+            <span className="sr-only">Good Looks</span>
           </Link>
           <Link
             href="/"
@@ -111,32 +111,32 @@ export default function Navbar() {
           <SheetContent side="left">
             <nav className="grid gap-6 text-lg font-medium">
               <Link
-                href="#"
+                href="/"
                 className="flex items-center gap-2 text-lg font-semibold"
               >
                 <Package2 className="h-6 w-6" />
-                <span className="sr-only">Acme Inc</span>
+                <span className="sr-only">Good Looks</span>
               </Link>
               <Link
-                href="#"
+                href="/"
                 className="text-muted-foreground hover:text-foreground"
               >
                 Home
               </Link>
               <Link
-                href="#"
+                href="/#car"
                 className="text-muted-foreground hover:text-foreground"
               >
                 Trust
               </Link>
               <Link
-                href="#"
+                href="/#feature"
                 className="text-muted-foreground hover:text-foreground"
               >
                 Features
               </Link>
               <Link
-                href="#"
+                href="/#price"
                 className="text-muted-foreground hover:text-foreground"
               >
                 Pricing

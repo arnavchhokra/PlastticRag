@@ -6,20 +6,27 @@ const { GoogleAIFileManager } =  require("@google/generative-ai/server");
 const express = require("express");
 const cors = require("cors");
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 
+require('dotenv').config();
 
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('./model/userModel');
 
-const url= "mongodb://localhost:27017/";
-mongoose.connect(url,{useNewUrlParser: true});
+const  mongo_user = process.env.MONGO_USER;
+const mongo_pass = process.env.MONGO_PASSWORD;
+
+
+
+const uri =`mongodb+srv://${mongo_user}:${mongo_pass}@goodlookscluster.u6bqu.mongodb.net/?retryWrites=true&w=majority&appName=goodLooksCluster`
+
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 const con= mongoose.connection;
 
 
 
-require('dotenv').config();
 const app = express();
 
 
@@ -196,7 +203,8 @@ app.post("/generate", upload.single("file"), protectRoute,  async (req, res) => 
 app.post('/register', async (req, res) => {
   try {
       const { username, email, password } = req.body;
-      const user = new User({ username, email, password });
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new User({ username, email, password:hashedPassword });
       await user.save();
       res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
@@ -209,7 +217,7 @@ app.post('/login', async (req, res) => {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
 
-      if (!user || user.password !== password) {
+      if (!user ||  !(await bcrypt.compare(password, user.password))) {
           return res.status(401).json({ message: 'Invalid email or password' });
       }
 
