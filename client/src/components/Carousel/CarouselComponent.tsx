@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState} from "react";
 import {
     Carousel,
     CarouselApi,
@@ -35,64 +35,24 @@ const images = [
 export default function CarouselComponent() {
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
-    const [visibleItems, setVisibleItems] = useState(new Array(images.length).fill(false));
-    const observerRef = useRef<IntersectionObserver | null>(null);
 
-    // Initialize Intersection Observer
     useEffect(() => {
-        observerRef.current = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const index = Number(entry.target.getAttribute('data-index'));
-                    setVisibleItems((prev) => {
-                        const newVisibleItems = [...prev];
-                        newVisibleItems[index] = true;
-                        return newVisibleItems;
-                    });
-                }
-            });
-        });
+        if (!api) {
+        return;
+        }
 
-        const items = document.querySelectorAll('.carousel-item');
-        items.forEach((item, index) => {
-            item.setAttribute('data-index', String(index));
-            observerRef.current?.observe(item);
-        });
-
-        return () => {
-            observerRef.current?.disconnect();
-        };
-    }, []);
-
-    // Debounce function
-    const debounce = (func: Function, delay: number) => {
-        let timeoutId: NodeJS.Timeout;
-        return (...args: any) => {
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-            timeoutId = setTimeout(() => {
-                func(...args);
-            }, delay);
-        };
-    };
-
-    // Scroll Next Image Function
-    useEffect(() => {
-        if (!api) return;
-
-        const scrollNextImage = debounce(() => {
-            if (api.selectedScrollSnap() + 1 === api.scrollSnapList().length) {
-                setCurrent(0);
-                api.scrollTo(0);
-            } else {
-                api.scrollNext();
-                setCurrent((prev) => prev + 1);
-            }
-        }, 2000); // Adjust the delay as needed
-
-        scrollNextImage();
+        setTimeout(() => {
+        if (api.selectedScrollSnap() + 1 === api.scrollSnapList().length) {
+            setCurrent(0);
+            api.scrollTo(0);
+        } else {
+            api.scrollNext();
+            setCurrent(current + 1);
+        }
+        }, 1000);
     }, [api, current]);
+
+
 
     return (
         <div id="car" className="px-5 w-full py-20 lg:py-40">
@@ -111,7 +71,6 @@ export default function CarouselComponent() {
                                         key={index}
                                     >
                                         <div className="flex max-h-[150px] rounded-md aspect-square bg-muted items-center justify-center p-1">
-                                            {visibleItems[index] && (
                                                 <Image
                                                     width="100"
                                                     height="100"
@@ -120,7 +79,6 @@ export default function CarouselComponent() {
                                                     alt={`Image ${index + 1}`}
                                                     className="w-full h-full object-cover"
                                                 />
-                                            )}
                                         </div>
                                     </CarouselItem>
                                 ))}

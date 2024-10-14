@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 export default function Home() {
 
-  const [token, setToken] = useRecoilState(userAtom);
+  const [, setToken] = useRecoilState(userAtom);
 
   useEffect(() => {
     const token = localStorage.getItem("looksmax");

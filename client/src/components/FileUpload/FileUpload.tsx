@@ -1,10 +1,7 @@
 import { useState, ChangeEvent } from "react"
 import { Button } from "@/components/ui/button"
-import { CloudUpload  } from "lucide-react"
-import { File } from "lucide-react"
-import { X } from "lucide-react"
+import { CloudUpload, File, X  } from "lucide-react"
 import { useRouter } from "next/navigation"
-import Error from "next/error"
 import { ApiResponse } from "@/types/facialtypes"
 import { faceAtom, userAtom  } from "@/atom/atom"
 import { useRecoilValue, useRecoilState } from "recoil"
@@ -18,7 +15,7 @@ export default function FileUpload() {
 
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
-  const [responseData, setResponseData] = useRecoilState(faceAtom);
+  const [, setResponseData] = useRecoilState(faceAtom);
   const [loading, setLoading] = useState(false);
   const token = useRecoilValue(userAtom);
 
@@ -69,8 +66,12 @@ export default function FileUpload() {
       }
     }
 
-    catch(e:any){
-      console.error(e.message)
+    catch(e){
+      toast({
+        title: "Please upload a better image",
+        description: `${e}`,
+        variant: "destructive",
+      })
     }
   }
 

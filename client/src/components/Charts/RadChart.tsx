@@ -28,7 +28,7 @@ const chartConfig = {
 
   const chartData = [{ month: "january", desktop: value, mobile: 5 }]
 
-  const totalVisitors = chartData[0].desktop||1 + chartData[0].mobile
+  //const totalVisitors = chartData[0].desktop||1 + chartData[0].mobile
 
   return (
         <ChartContainer

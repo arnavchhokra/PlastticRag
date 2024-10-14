@@ -5,7 +5,7 @@ import { Bar, BarChart, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Legend
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Button } from "@/components/ui/button"
-import { ArrowUpRight, Eye, Smile, Scissors, Sparkles } from "lucide-react"
+import { ArrowUpRight, Smile, Scissors, Sparkles } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import RadChart from "./RadChart"
 import { faceAtom } from "@/atom/atom"
@@ -27,7 +27,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ feature, value })=> (
 
 
 export default function ChartBlock() {
-  const [userData, setUserData] = useRecoilState(faceAtom);
+  const [userData,] = useRecoilState(faceAtom);
 
 // Mock da
 const facialComparisonData = [

@@ -3,9 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { motion } from "framer-motion";
 
-import { MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ModeToggle from "../ModeToggle/ModeToggle";
 import { useRouter} from "next/navigation";
 import {
   Dialog,
@@ -36,7 +34,7 @@ function Hero()
     }
 
 
-  },[user])
+  },[setUser])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {

@@ -15,7 +15,6 @@ import {
 import { userAtom } from "@/atom/atom"
 import { useRecoilState } from "recoil"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation";
 
 
 export const description =
@@ -23,10 +22,9 @@ export const description =
 
 
 export default function Navbar() {
-  const router = useRouter();
   const [text, setText] = useState<string>("");
-  const [token, setToken] = useRecoilState(userAtom);
-  const [user, setUser] = useState<string>("Account");
+  const [, setToken] = useRecoilState(userAtom);
+  const [user, ] = useState<string>("Account");
 
 
   useEffect(() => {
