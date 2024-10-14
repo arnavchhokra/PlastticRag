@@ -1,0 +1,27 @@
+
+env/
+.env
+*.env
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# Backup and Temporary Files
+*.bak
+*.swp
+*.tmp
+
+# Coverage Reports
+htmlcov/
+.coverage
+.coverage.*
+
+

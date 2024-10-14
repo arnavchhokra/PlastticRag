@@ -1,0 +1,38 @@
+version: '3.8'
+
+# Services
+services:
+  # Server service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+    env_file: ./backend/.env
+    #environment:
+     # - MONGO_URI=${MONGO_URI} # Reference the connection string from the .env file
+      #- JWT_SECRET=${JWT_SECRET} # Reference JWT_SECRET from the .env file
+      #- GOOGLE_API_KEY=${GOOGLE_API_KEY} # Reference the Google API key from the .env file
+
+
+
+  # Client service
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file: ./client/.env
+   # environment:
+     # - NEXT_PUBLIC_API_URL="http://localhost:8000" # Set the backend API URL to use the service name
+    depends_on:
+      - backend
+    networks:
+      - mern-network
+
+networks:
+  mern-network:
+    driver: bridge

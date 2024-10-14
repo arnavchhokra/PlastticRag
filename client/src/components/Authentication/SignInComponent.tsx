@@ -24,7 +24,7 @@ export default function SignInComponent() {
 
   const handleLogin = async () => {
     try {
-        const response = await fetch('http://localhost:8000/login', {
+        const response = await fetch("http://localhost:8000/login", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -34,6 +34,7 @@ export default function SignInComponent() {
 
         if (!response.ok) {
             const errorData = await response.json();
+            console.log(errorData.message);
             throw new Error(errorData.message || 'Login failed');
         }
 
