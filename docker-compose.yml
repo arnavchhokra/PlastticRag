@@ -23,6 +23,7 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+    container_name: client
     ports:
       - "3000:3000"
     env_file: ./client/.env
