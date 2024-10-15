@@ -31,7 +31,7 @@ export default function SignUpComponent() {
     }
 
     try {
-      const response = await fetch("http://65.2.67.13:8000/register", {
+      const response = await fetch("https://goodlooks.ddns.net/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

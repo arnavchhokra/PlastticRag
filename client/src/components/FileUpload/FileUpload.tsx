@@ -43,7 +43,7 @@ export default function FileUpload() {
     const formData = new FormData()
     formData.append("file", file)
     try{
-      const response = await fetch("http://65.2.67.13:8000/generate", {
+      const response = await fetch("https://goodlooks.ddns.net/generate", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // Send the token in the Authorization header
